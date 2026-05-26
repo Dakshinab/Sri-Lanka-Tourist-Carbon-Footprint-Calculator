@@ -198,5 +198,6 @@ Meal, Resting, Walking, Jogging, Hiking, Bicycle Ride, Swimming / Snorkeling, Su
 
 ## Author
 
-Final Year Project — Department of Information Technology  
-University of Moratuwa / SLIIT *(update as applicable)*
+**Dakshina Dissanayake**
+Final Year Project — Faculty of Information Technology
+Horizon Campus
