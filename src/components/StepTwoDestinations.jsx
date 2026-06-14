@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { HOTELS, LOCATIONS } from "../data";
+import ConfirmModal from "./ConfirmModal";
 
 function StepTwoDestinations({ destinations, updateDestination, removeDestination, addDestination, allocatedDays, totalDays, errors = {} }) {
   const [collapsedHotels, setCollapsedHotels] = useState({});
+  const [modal, setModal] = useState({ isOpen: false, destId: null, location: "" });
 
   const toggleHotelCollapse = (id) => {
     setCollapsedHotels((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -14,12 +16,36 @@ function StepTwoDestinations({ destinations, updateDestination, removeDestinatio
   const isDuplicate = (id, location) =>
     destinations.some((d) => d.id !== id && d.location === location);
 
+  const handleRemoveClick = (id, location) => {
+    setModal({ isOpen: true, destId: id, location });
+  };
+
+  const handleConfirmRemove = () => {
+    removeDestination(modal.destId);
+    setModal({ isOpen: false, destId: null, location: "" });
+  };
+
+  const handleCancelRemove = () => {
+    setModal({ isOpen: false, destId: null, location: "" });
+  };
+
   return (
     <section className="step active">
       <h2>Destinations & Hotels</h2>
       <p className="muted">Select locations in travel order and assign stay days. Total allocated days must equal trip length.</p>
 
-      {/* ── Sticky Progress Bar ── */}
+      <ConfirmModal
+        isOpen={modal.isOpen}
+        title="Remove Destination"
+        message={`Are you sure you want to remove "${modal.location}" from your itinerary? This cannot be undone.`}
+        confirmLabel="Remove"
+        cancelLabel="Keep"
+        danger={true}
+        onConfirm={handleConfirmRemove}
+        onCancel={handleCancelRemove}
+      />
+
+      {/* ── Days Progress Bar ── */}
       <div className="days-progress-sticky">
         <div className="days-progress-header">
           <span>Days Allocated</span>
@@ -27,7 +53,7 @@ function StepTwoDestinations({ destinations, updateDestination, removeDestinatio
             {allocatedDays} / {totalDays} days
             {remaining > 0 && <span className="prog-remaining"> ({remaining} remaining)</span>}
             {remaining < 0 && <span className="prog-remaining"> ({Math.abs(remaining)} over)</span>}
-            {remaining === 0 && totalDays > 0 && <span className="prog-remaining"> ✓ Perfect</span>}
+            {remaining === 0 && totalDays > 0 && <span className="prog-remaining"> — Perfect</span>}
           </span>
         </div>
         <div className="days-progress-bar">
@@ -46,11 +72,7 @@ function StepTwoDestinations({ destinations, updateDestination, removeDestinatio
             <button
               className="btn btn-danger"
               type="button"
-              onClick={() => {
-                if (window.confirm(`Remove "${d.location}" from your itinerary?`)) {
-                  removeDestination(d.id);
-                }
-              }}
+              onClick={() => handleRemoveClick(d.id, d.location)}
             >
               Remove
             </button>
@@ -58,7 +80,7 @@ function StepTwoDestinations({ destinations, updateDestination, removeDestinatio
 
           {isDuplicate(d.id, d.location) && (
             <div className="duplicate-warn">
-              ⚠ "{d.location}" is already added. Consider merging the stay days.
+              "{d.location}" is already added. Consider merging the stay days.
             </div>
           )}
 
@@ -110,7 +132,7 @@ function StepTwoDestinations({ destinations, updateDestination, removeDestinatio
                     style={{ fontSize: "0.78rem", padding: "4px 10px" }}
                     onClick={() => toggleHotelCollapse(d.id)}
                   >
-                    {collapsedHotels[d.id] ? "▼ Show" : "▲ Hide"}
+                    {collapsedHotels[d.id] ? "Show" : "Hide"}
                   </button>
                 </div>
 
@@ -157,7 +179,7 @@ function StepTwoDestinations({ destinations, updateDestination, removeDestinatio
         Allocated {allocatedDays}/{totalDays} days.
         {errors.allocatedDays && (
           <span style={{ display: "block", color: "#c0392b", marginTop: 4, fontWeight: 600 }}>
-            ⚠ {errors.allocatedDays}
+            {errors.allocatedDays}
           </span>
         )}
       </div>

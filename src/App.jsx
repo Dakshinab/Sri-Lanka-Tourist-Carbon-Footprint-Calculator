@@ -3,7 +3,7 @@ import StepOneTripDetails from "./components/StepOneTripDetails";
 import StepTwoDestinations from "./components/StepTwoDestinations";
 import StepThreeItinerary from "./components/StepThreeItinerary";
 import StepFourReport from "./components/StepFourReport";
-import { defaultBase, defaultDestination, HOTELS, VEHICLES, ACTIVITY_EMISSION_FACTORS, HOTEL_EMISSION_FACTORS } from "./data";
+import { defaultBase, defaultDestination, HOTELS, VEHICLES, ACTIVITY_EMISSION_FACTORS, HOTEL_EMISSION_FACTORS, DAY_TEMPLATES } from "./data";
 
 function App() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -90,57 +90,64 @@ function App() {
   };
 
   const buildItinerary = () => {
-    if (allocatedDays !== Number(base.totalDays)) return { ok: false, message: "Destination day allocation must match total stay days." };
-    const nextDays = [];
-    let day = 1;
-    destinations.forEach((d) => {
-      for (let i = 0; i < d.days; i += 1) {
-        const hotelNameForDay = d.sameHotelForAllDays ? d.hotelName : (d.dayHotels?.[i]?.name || d.hotelName);
-        nextDays.push({
-          day,
-          location: d.location,
-          hotelName: hotelNameForDay,
-          hotelStar: d.sameHotelForAllDays ? d.hotelStar : (d.dayHotels?.[i]?.star || d.hotelStar),
-          hotelArrivalTime: "",
-          timeline: [],
-          newEntryStart: "",
-          newEntryEnd: "",
-          newEntryLabel: "",
-          newEntryType: "Other",
-          activities: { notes: "" }
-        });
-        day += 1;
-      }
-    });
-
-    const choice = availableVehicles[0]?.name || "Public Bus / Train";
-    const nextLegs = [];
-    nextLegs.push({
-      from: base.arrivalAirport,
-      to: destinations[0].location,
-      when: "Day 1 - after arrival",
-      transportMode: base.isRental ? "Rental Vehicle" : choice
-    });
-    for (let i = 0; i < destinations.length - 1; i += 1) {
-      const fromDay = destinations.slice(0, i + 1).reduce((sum, d) => sum + Number(d.days), 0);
-      nextLegs.push({
-        from: destinations[i].location,
-        to: destinations[i + 1].location,
-        when: `End of Day ${fromDay} / Start of Day ${fromDay + 1}`,
-        transportMode: base.isRental ? "Rental Vehicle" : choice
+  if (allocatedDays !== Number(base.totalDays)) return { ok: false, message: "Destination day allocation must match total stay days." };
+  
+  const nextDays = [];
+  let day = 1;
+  destinations.forEach((d) => {
+    for (let i = 0; i < d.days; i += 1) {
+      const hotelNameForDay = d.sameHotelForAllDays ? d.hotelName : (d.dayHotels?.[i]?.name || d.hotelName);
+      const isCheckedIn = d.sameHotelForAllDays && i > 0;
+      nextDays.push({
+        day,
+        location: d.location,
+        hotelName: hotelNameForDay,
+        hotelStar: d.sameHotelForAllDays ? d.hotelStar : (d.dayHotels?.[i]?.star || d.hotelStar),
+        hotelArrivalTime: isCheckedIn ? "already-checked-in" : "",
+        isCheckedIn,
+        timeline: [],
+        newEntryStart: "",
+        newEntryEnd: "",
+        newEntryLabel: "",
+        newEntryType: "Other",
+        activities: { notes: "" }
       });
+      day += 1;
     }
-    nextLegs.push({
-      from: destinations[destinations.length - 1].location,
-      to: base.departureAirport,
-      when: `Day ${base.totalDays} - before departure`,
-      transportMode: base.isRental ? "Rental Vehicle" : choice
-    });
+  });
 
-    setDayPlans(nextDays);
-    setLegPlans(nextLegs);
-    return { ok: true };
-  };
+  const choice = availableVehicles[0]?.name || "Public Bus / Train";
+  const defaultFuel = availableVehicles[0]?.allowedFuels[0] || "Petrol";
+  const nextLegs = [];
+  nextLegs.push({
+    from: base.arrivalAirport,
+    to: destinations[0].location,
+    when: "Day 1 - after arrival",
+    transportMode: base.isRental ? "Rental Vehicle" : choice,
+    fuelType: base.isRental ? base.rentalPowerSource : defaultFuel
+  });
+  for (let i = 0; i < destinations.length - 1; i += 1) {
+    const fromDay = destinations.slice(0, i + 1).reduce((sum, d) => sum + Number(d.days), 0);
+    nextLegs.push({
+      from: destinations[i].location,
+      to: destinations[i + 1].location,
+      when: `End of Day ${fromDay} / Start of Day ${fromDay + 1}`,
+      transportMode: base.isRental ? "Rental Vehicle" : choice,
+      fuelType: base.isRental ? base.rentalPowerSource : defaultFuel
+    });
+  }
+  nextLegs.push({
+    from: destinations[destinations.length - 1].location,
+    to: base.departureAirport,
+    when: `Day ${base.totalDays} - before departure`,
+    transportMode: base.isRental ? "Rental Vehicle" : choice,
+    fuelType: base.isRental ? base.rentalPowerSource : defaultFuel
+  });
+
+  setDayPlans(nextDays);
+  setLegPlans(nextLegs);
+  return { ok: true };
+};
 
   const getStepErrors = (step) => {
     const errs = {};
@@ -197,13 +204,13 @@ function App() {
   };
 
   const getDayHotelHours = (dayObj) => {
-    const minutes = dayObj.timeline.reduce((sum, row) => {
-      if (!row.label.toLowerCase().includes("hotel")) return sum;
-      const { s, e } = normalizedRange(row.start, row.end);
-      return sum + Math.max(0, e - s);
-    }, 0);
-    return Math.round((minutes / 60) * 10) / 10;
-  };
+  const totalActivityMinutes = dayObj.timeline.reduce((sum, row) => {
+    const { s, e } = normalizedRange(row.start, row.end);
+    return sum + Math.max(0, e - s);
+  }, 0);
+  const hotelMinutes = Math.max(0, 1440 - totalActivityMinutes);
+  return Math.round((hotelMinutes / 60) * 10) / 10;
+};
 
   const addTimelineEntry = (dayIdx) => {
     setDayPlans((prev) => {
@@ -245,6 +252,20 @@ function App() {
     }));
   };
 
+  const applyTemplate = (dayIdx, templateActivities) => {
+  setDayPlans((prev) => prev.map((d, i) => {
+    if (i !== dayIdx) return d;
+    return {
+      ...d,
+      timeline: templateActivities,
+      newEntryStart: "",
+      newEntryEnd: "",
+      newEntryLabel: "",
+      newEntryType: "Other"
+    };
+  }));
+};
+
   const nextStep = () => {
     const stepErrors = getStepErrors(currentStep);
     if (Object.keys(stepErrors).length > 0) {
@@ -279,7 +300,7 @@ function App() {
       .join("");
 
     const legSummary = legPlans
-      .map((l, i) => `<li>${i + 1}. ${l.from} -> ${l.to} (${l.when}) via ${l.transportMode}</li>`)
+      .map((l, i) => `<li>${i + 1}. ${l.from} -> ${l.to} (${l.when}) via ${l.transportMode} — ${l.fuelType}</li>`)
       .join("");
 
     const dailySummary = dayPlans
@@ -303,7 +324,8 @@ function App() {
     // ── Hotel Emissions ──
     const hotelEmission = dayPlans.reduce((total, day) => {
       const factor = HOTEL_EMISSION_FACTORS[day.hotelStar] ?? 20;
-      return total + (factor * base.groupSize);
+      const hotelHours = getDayHotelHours(day);
+      return total + (factor * (hotelHours / 24) * base.groupSize);
     }, 0);
 
     // ── Activity Type Breakdown ──
@@ -376,7 +398,7 @@ function App() {
             <h3>Day ${d.day}: ${d.location} (${d.hotelName} — ${d.hotelStar})</h3>
             <ul>
               <li>Hotel Arrival Time: ${d.hotelArrivalTime || "-"}</li>
-              <li>Hotel Emission: ${(HOTEL_EMISSION_FACTORS[d.hotelStar] * base.groupSize).toFixed(2)} kg CO₂ (${d.hotelStar}, ${base.groupSize} person(s))</li>
+              <li>Hotel Emission: ${(HOTEL_EMISSION_FACTORS[d.hotelStar] * (getDayHotelHours(d) / 24) * base.groupSize).toFixed(2)} kg CO₂ (${d.hotelStar}, ${getDayHotelHours(d)}h hotel time, ${base.groupSize} person(s))</li>
               ${d.activities.notes ? `<li>Notes: ${d.activities.notes}</li>` : ""}
             </ul>
             <h4>Activities</h4>
@@ -491,6 +513,7 @@ function App() {
               availableVehicles={availableVehicles}
               addTimelineEntry={addTimelineEntry}
               removeTimelineEntry={removeTimelineEntry}
+              applyTemplate={applyTemplate}
               errors={errors}
             />
           )}

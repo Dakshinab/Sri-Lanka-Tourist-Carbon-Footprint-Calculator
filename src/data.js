@@ -123,14 +123,16 @@ export const HOTELS = {
 };
 
 export const VEHICLES = [
-  { name: "Bike (1)", min: 1, max: 1, type: "Human-powered" },
-  { name: "Three-Wheeler (3)", min: 1, max: 3, type: "Fuel Vehicle" },
-  { name: "Small Car (3-4)", min: 1, max: 4, type: "Fuel or EV" },
-  { name: "SUV / Jeep (5-6)", min: 2, max: 6, type: "Fuel or Hybrid" },
-  { name: "Tourist Van (8-12)", min: 4, max: 12, type: "Fuel Vehicle" },
-  { name: "Mini Bus (15-22)", min: 8, max: 22, type: "Fuel Vehicle" },
-  { name: "Large Coach (30-45)", min: 20, max: 45, type: "Fuel Vehicle" },
-  { name: "Public Transport (Bus/Train)", min: 1, max: 999, type: "Public Transport" }
+  { name: "Scooter / Scooty (1-2)", min: 1, max: 2, allowedFuels: ["Petrol", "EV"] },
+  { name: "Motorbike (1-2)", min: 1, max: 2, allowedFuels: ["Petrol"] },
+  { name: "Bicycle (1)", min: 1, max: 1, allowedFuels: ["Human-powered"] },
+  { name: "Three-Wheeler (1-3)", min: 1, max: 3, allowedFuels: ["Petrol", "EV"] },
+  { name: "Small Car (3-4)", min: 1, max: 4, allowedFuels: ["Petrol", "Diesel", "EV", "Hybrid"] },
+  { name: "SUV / Jeep (5-6)", min: 2, max: 6, allowedFuels: ["Petrol", "Diesel", "Hybrid"] },
+  { name: "Tourist Van (8-12)", min: 4, max: 12, allowedFuels: ["Petrol", "Diesel"] },
+  { name: "Mini Bus (15-22)", min: 8, max: 22, allowedFuels: ["Petrol", "Diesel"] },
+  { name: "Large Coach (30-45)", min: 20, max: 45, allowedFuels: ["Petrol", "Diesel"] },
+  { name: "Public Transport (Bus/Train)", min: 1, max: 999, allowedFuels: ["Public"] }
 ];
 
 export const ACTIVITY_TYPES = [
@@ -224,4 +226,721 @@ export const HOTEL_EMISSION_FACTORS = {
   "3-star": 20,
   "4-star": 35,
   "5-star": 60,
+};
+
+// ── Day Templates (Location-Specific) ──
+export const DAY_TEMPLATES = {
+  Colombo: [
+    {
+      name: "City Tour",
+      activities: [
+        { start: "08:00", end: "09:00", label: "Breakfast", type: "Meal" },
+        { start: "09:00", end: "12:00", label: "Colombo City Sightseeing", type: "Sightseeing" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "16:00", label: "Gangaramaya Temple Visit", type: "Cultural / Temple Visit" },
+        { start: "16:00", end: "18:00", label: "Pettah Market Shopping", type: "Shopping" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Shopping & Leisure",
+      activities: [
+        { start: "08:00", end: "09:00", label: "Breakfast", type: "Meal" },
+        { start: "09:00", end: "13:00", label: "Colombo Shopping Malls", type: "Shopping" },
+        { start: "13:00", end: "14:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "16:00", label: "Galle Face Green Walk", type: "Walking" },
+        { start: "16:00", end: "18:00", label: "Spa & Relaxation", type: "Spa / Ayurveda" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Cultural Immersion",
+      activities: [
+        { start: "08:00", end: "09:00", label: "Breakfast", type: "Meal" },
+        { start: "09:00", end: "11:00", label: "National Museum Visit", type: "Cultural / Temple Visit" },
+        { start: "11:00", end: "13:00", label: "Old Town Walking Tour", type: "Walking" },
+        { start: "13:00", end: "14:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "17:00", label: "Kelaniya Temple Visit", type: "Cultural / Temple Visit" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    }
+  ],
+  Kandy: [
+    {
+      name: "Cultural Tour",
+      activities: [
+        { start: "08:00", end: "09:00", label: "Breakfast", type: "Meal" },
+        { start: "09:00", end: "11:00", label: "Temple of the Tooth Visit", type: "Cultural / Temple Visit" },
+        { start: "11:00", end: "13:00", label: "Kandy City Sightseeing", type: "Sightseeing" },
+        { start: "13:00", end: "14:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "16:00", label: "Royal Botanical Gardens", type: "Sightseeing" },
+        { start: "16:00", end: "18:00", label: "Local Market Shopping", type: "Shopping" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Nature & Hiking",
+      activities: [
+        { start: "06:00", end: "09:00", label: "Knuckles Mountain Hike", type: "Hiking" },
+        { start: "09:00", end: "10:00", label: "Breakfast", type: "Meal" },
+        { start: "10:00", end: "12:00", label: "Udawatta Kele Forest Walk", type: "Walking" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "17:00", label: "Lake Walk & Sightseeing", type: "Sightseeing" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Relaxation & Wellness",
+      activities: [
+        { start: "09:00", end: "10:00", label: "Breakfast", type: "Meal" },
+        { start: "10:00", end: "12:00", label: "Ayurveda Spa Treatment", type: "Spa / Ayurveda" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "16:00", label: "Kandy Lake Walk", type: "Walking" },
+        { start: "16:00", end: "18:00", label: "Evening Sightseeing", type: "Sightseeing" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    }
+  ],
+  Galle: [
+    {
+      name: "Fort & History Tour",
+      activities: [
+        { start: "08:00", end: "09:00", label: "Breakfast", type: "Meal" },
+        { start: "09:00", end: "12:00", label: "Galle Fort Walking Tour", type: "Cultural / Temple Visit" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "15:00", label: "Dutch Reformed Church Visit", type: "Cultural / Temple Visit" },
+        { start: "15:00", end: "17:00", label: "Fort Ramparts Walk", type: "Walking" },
+        { start: "17:00", end: "19:00", label: "Boutique Shopping", type: "Shopping" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Beach & Water Sports",
+      activities: [
+        { start: "08:00", end: "09:00", label: "Breakfast", type: "Meal" },
+        { start: "09:00", end: "12:00", label: "Unawatuna Beach Swim", type: "Swimming / Snorkeling" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "16:00", label: "Snorkeling at Jungle Beach", type: "Swimming / Snorkeling" },
+        { start: "16:00", end: "18:00", label: "Beach Leisure", type: "Beach Leisure" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Relaxation Day",
+      activities: [
+        { start: "09:00", end: "10:00", label: "Breakfast", type: "Meal" },
+        { start: "10:00", end: "12:00", label: "Spa Treatment", type: "Spa / Ayurveda" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "16:00", label: "Beach Leisure", type: "Beach Leisure" },
+        { start: "16:00", end: "18:00", label: "Galle Fort Evening Walk", type: "Walking" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    }
+  ],
+  Ella: [
+    {
+      name: "Train & Nine Arch Day",
+      activities: [
+        { start: "07:00", end: "08:00", label: "Breakfast", type: "Meal" },
+        { start: "08:00", end: "10:00", label: "Nine Arch Bridge Visit", type: "Sightseeing" },
+        { start: "10:00", end: "12:00", label: "Ella Rock Hike", type: "Hiking" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "15:00", label: "Little Adam's Peak Hike", type: "Hiking" },
+        { start: "15:00", end: "17:00", label: "Tea Plantation Walk", type: "Walking" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Adventure Day",
+      activities: [
+        { start: "06:00", end: "09:00", label: "Ella Rock Summit Hike", type: "Hiking" },
+        { start: "09:00", end: "10:00", label: "Breakfast", type: "Meal" },
+        { start: "10:00", end: "12:00", label: "Ravana Falls Visit", type: "Sightseeing" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "16:00", label: "Zip Lining", type: "Other" },
+        { start: "16:00", end: "18:00", label: "Village Walk", type: "Walking" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Relaxation & Scenery",
+      activities: [
+        { start: "08:00", end: "09:00", label: "Breakfast", type: "Meal" },
+        { start: "09:00", end: "11:00", label: "Tea Factory Visit", type: "Cultural / Temple Visit" },
+        { start: "11:00", end: "13:00", label: "Scenic Walk", type: "Walking" },
+        { start: "13:00", end: "14:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "16:00", label: "Spa Treatment", type: "Spa / Ayurveda" },
+        { start: "16:00", end: "18:00", label: "Nine Arch Bridge Sunset", type: "Sightseeing" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    }
+  ],
+  "Nuwara Eliya": [
+    {
+      name: "Tea Country Tour",
+      activities: [
+        { start: "08:00", end: "09:00", label: "Breakfast", type: "Meal" },
+        { start: "09:00", end: "11:00", label: "Tea Factory & Plantation Tour", type: "Cultural / Temple Visit" },
+        { start: "11:00", end: "13:00", label: "Gregory Lake Walk", type: "Walking" },
+        { start: "13:00", end: "14:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "16:00", label: "Hakgala Botanical Gardens", type: "Sightseeing" },
+        { start: "16:00", end: "18:00", label: "Nuwara Eliya Town Walk", type: "Walking" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Nature & Hiking",
+      activities: [
+        { start: "06:00", end: "10:00", label: "Pidurutalagala Hike", type: "Hiking" },
+        { start: "10:00", end: "11:00", label: "Breakfast", type: "Meal" },
+        { start: "11:00", end: "13:00", label: "Horton Plains Walk", type: "Walking" },
+        { start: "13:00", end: "14:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "16:00", label: "World's End Viewpoint", type: "Sightseeing" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Relaxation & Gardens",
+      activities: [
+        { start: "09:00", end: "10:00", label: "Breakfast", type: "Meal" },
+        { start: "10:00", end: "12:00", label: "Victoria Park Walk", type: "Walking" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "15:00", label: "Spa Treatment", type: "Spa / Ayurveda" },
+        { start: "15:00", end: "17:00", label: "Gregory Lake Boating", type: "Boat Ride" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    }
+  ],
+  Sigiriya: [
+    {
+      name: "Rock Fortress Day",
+      activities: [
+        { start: "06:00", end: "07:00", label: "Breakfast", type: "Meal" },
+        { start: "07:00", end: "11:00", label: "Sigiriya Rock Climb", type: "Hiking" },
+        { start: "11:00", end: "12:00", label: "Sigiriya Museum Visit", type: "Cultural / Temple Visit" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "16:00", label: "Pidurangala Rock Hike", type: "Hiking" },
+        { start: "16:00", end: "18:00", label: "Village Cycling Tour", type: "Bicycle Ride" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Cultural & Village Tour",
+      activities: [
+        { start: "08:00", end: "09:00", label: "Breakfast", type: "Meal" },
+        { start: "09:00", end: "11:00", label: "Dambulla Cave Temple", type: "Cultural / Temple Visit" },
+        { start: "11:00", end: "13:00", label: "Sigiriya Village Walk", type: "Walking" },
+        { start: "13:00", end: "14:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "16:00", label: "Local Craft Shopping", type: "Shopping" },
+        { start: "16:00", end: "18:00", label: "Sunset Sightseeing", type: "Sightseeing" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Cycling & Nature",
+      activities: [
+        { start: "07:00", end: "08:00", label: "Breakfast", type: "Meal" },
+        { start: "08:00", end: "11:00", label: "Village Cycling Tour", type: "Bicycle Ride" },
+        { start: "11:00", end: "13:00", label: "Minneriya Lake Walk", type: "Walking" },
+        { start: "13:00", end: "14:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "17:00", label: "Minneriya Safari", type: "Wildlife Safari" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    }
+  ],
+  Bentota: [
+    {
+      name: "Beach & Water Sports",
+      activities: [
+        { start: "08:00", end: "09:00", label: "Breakfast", type: "Meal" },
+        { start: "09:00", end: "12:00", label: "Bentota Beach Surfing", type: "Surfing" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "15:00", label: "River Boat Ride", type: "Boat Ride" },
+        { start: "15:00", end: "17:00", label: "Beach Leisure", type: "Beach Leisure" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "River & Nature",
+      activities: [
+        { start: "08:00", end: "09:00", label: "Breakfast", type: "Meal" },
+        { start: "09:00", end: "12:00", label: "Madu River Safari", type: "Boat Ride" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "15:00", label: "Turtle Hatchery Visit", type: "Sightseeing" },
+        { start: "15:00", end: "17:00", label: "Beach Walk", type: "Walking" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Relaxation Day",
+      activities: [
+        { start: "09:00", end: "10:00", label: "Breakfast", type: "Meal" },
+        { start: "10:00", end: "12:00", label: "Ayurveda Spa", type: "Spa / Ayurveda" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "16:00", label: "Beach Leisure", type: "Beach Leisure" },
+        { start: "16:00", end: "18:00", label: "Sunset Beach Walk", type: "Walking" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    }
+  ],
+  Anuradhapura: [
+    {
+      name: "Ancient City Tour",
+      activities: [
+        { start: "07:00", end: "08:00", label: "Breakfast", type: "Meal" },
+        { start: "08:00", end: "11:00", label: "Sacred City Cycling Tour", type: "Bicycle Ride" },
+        { start: "11:00", end: "13:00", label: "Ruwanwelisaya Stupa Visit", type: "Cultural / Temple Visit" },
+        { start: "13:00", end: "14:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "17:00", label: "Jetavanaramaya & Temples", type: "Cultural / Temple Visit" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Heritage & Culture",
+      activities: [
+        { start: "08:00", end: "09:00", label: "Breakfast", type: "Meal" },
+        { start: "09:00", end: "12:00", label: "Mihintale Pilgrimage", type: "Cultural / Temple Visit" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "16:00", label: "Isurumuniya Rock Temple", type: "Cultural / Temple Visit" },
+        { start: "16:00", end: "18:00", label: "Nuwara Wewa Lake Walk", type: "Walking" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Nature & Relaxation",
+      activities: [
+        { start: "08:00", end: "09:00", label: "Breakfast", type: "Meal" },
+        { start: "09:00", end: "11:00", label: "Lake Walk", type: "Walking" },
+        { start: "11:00", end: "13:00", label: "Wilpattu Safari", type: "Wildlife Safari" },
+        { start: "13:00", end: "14:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "16:00", label: "Spa Treatment", type: "Spa / Ayurveda" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    }
+  ],
+  Yala: [
+    {
+      name: "Morning Safari",
+      activities: [
+        { start: "05:30", end: "06:00", label: "Early Breakfast", type: "Meal" },
+        { start: "06:00", end: "10:00", label: "Yala Morning Safari", type: "Wildlife Safari" },
+        { start: "10:00", end: "12:00", label: "Resort Rest", type: "Resting" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "16:00", label: "Nature Walk", type: "Walking" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Full Day Safari",
+      activities: [
+        { start: "05:30", end: "06:00", label: "Early Breakfast", type: "Meal" },
+        { start: "06:00", end: "11:00", label: "Yala Morning Safari", type: "Wildlife Safari" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "18:00", label: "Yala Afternoon Safari", type: "Wildlife Safari" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Nature & Beach",
+      activities: [
+        { start: "08:00", end: "09:00", label: "Breakfast", type: "Meal" },
+        { start: "09:00", end: "12:00", label: "Yala Beach Walk", type: "Beach Leisure" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "16:00", label: "Bundala Bird Safari", type: "Wildlife Safari" },
+        { start: "16:00", end: "18:00", label: "Nature Walk", type: "Walking" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    }
+  ],
+  "Arugam Bay": [
+    {
+      name: "Surf Day",
+      activities: [
+        { start: "06:00", end: "07:00", label: "Breakfast", type: "Meal" },
+        { start: "07:00", end: "11:00", label: "Morning Surf Session", type: "Surfing" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "17:00", label: "Afternoon Surf Session", type: "Surfing" },
+        { start: "17:00", end: "19:00", label: "Beach Leisure", type: "Beach Leisure" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Wildlife & Beach",
+      activities: [
+        { start: "06:00", end: "09:00", label: "Kumana Bird Safari", type: "Wildlife Safari" },
+        { start: "09:00", end: "10:00", label: "Breakfast", type: "Meal" },
+        { start: "10:00", end: "12:00", label: "Arugam Bay Beach Walk", type: "Beach Leisure" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "16:00", label: "Snorkeling", type: "Swimming / Snorkeling" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Relaxation Day",
+      activities: [
+        { start: "09:00", end: "10:00", label: "Breakfast", type: "Meal" },
+        { start: "10:00", end: "13:00", label: "Beach Leisure", type: "Beach Leisure" },
+        { start: "13:00", end: "14:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "16:00", label: "Spa Treatment", type: "Spa / Ayurveda" },
+        { start: "16:00", end: "18:00", label: "Sunset Walk", type: "Walking" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    }
+  ],
+  Trincomalee: [
+    {
+      name: "Beach & Snorkeling",
+      activities: [
+        { start: "08:00", end: "09:00", label: "Breakfast", type: "Meal" },
+        { start: "09:00", end: "12:00", label: "Nilaveli Beach Snorkeling", type: "Swimming / Snorkeling" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "15:00", label: "Pigeon Island Visit", type: "Boat Ride" },
+        { start: "15:00", end: "17:00", label: "Beach Leisure", type: "Beach Leisure" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Cultural & Whale Watching",
+      activities: [
+        { start: "07:00", end: "08:00", label: "Breakfast", type: "Meal" },
+        { start: "08:00", end: "12:00", label: "Whale Watching Boat Tour", type: "Boat Ride" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "15:00", label: "Koneswaram Temple Visit", type: "Cultural / Temple Visit" },
+        { start: "15:00", end: "17:00", label: "Fort Frederick Sightseeing", type: "Sightseeing" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Relaxation Day",
+      activities: [
+        { start: "09:00", end: "10:00", label: "Breakfast", type: "Meal" },
+        { start: "10:00", end: "12:00", label: "Spa Treatment", type: "Spa / Ayurveda" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "16:00", label: "Beach Leisure", type: "Beach Leisure" },
+        { start: "16:00", end: "18:00", label: "Sunset Walk", type: "Walking" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    }
+  ],
+  Jaffna: [
+    {
+      name: "Cultural Heritage Tour",
+      activities: [
+        { start: "08:00", end: "09:00", label: "Breakfast", type: "Meal" },
+        { start: "09:00", end: "11:00", label: "Nallur Kandaswamy Temple", type: "Cultural / Temple Visit" },
+        { start: "11:00", end: "13:00", label: "Jaffna Fort Visit", type: "Cultural / Temple Visit" },
+        { start: "13:00", end: "14:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "16:00", label: "Jaffna Library & Museum", type: "Cultural / Temple Visit" },
+        { start: "16:00", end: "18:00", label: "Local Market Walk", type: "Shopping" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Island & Beach Tour",
+      activities: [
+        { start: "08:00", end: "09:00", label: "Breakfast", type: "Meal" },
+        { start: "09:00", end: "12:00", label: "Nagadeepa Island Boat Trip", type: "Boat Ride" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "15:00", label: "Casuarina Beach Swim", type: "Swimming / Snorkeling" },
+        { start: "15:00", end: "17:00", label: "Beach Leisure", type: "Beach Leisure" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Cycling & Sightseeing",
+      activities: [
+        { start: "08:00", end: "09:00", label: "Breakfast", type: "Meal" },
+        { start: "09:00", end: "12:00", label: "Jaffna City Cycling Tour", type: "Bicycle Ride" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "15:00", label: "Keerimalai Springs Visit", type: "Sightseeing" },
+        { start: "15:00", end: "17:00", label: "Sunset Sightseeing", type: "Sightseeing" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    }
+  ],
+  Mirissa: [
+    {
+      name: "Whale Watching & Beach",
+      activities: [
+        { start: "06:00", end: "07:00", label: "Breakfast", type: "Meal" },
+        { start: "07:00", end: "11:00", label: "Whale Watching Boat Tour", type: "Boat Ride" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "16:00", label: "Mirissa Beach Leisure", type: "Beach Leisure" },
+        { start: "16:00", end: "18:00", label: "Parrot Rock Walk", type: "Walking" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Surf & Snorkel",
+      activities: [
+        { start: "07:00", end: "08:00", label: "Breakfast", type: "Meal" },
+        { start: "08:00", end: "11:00", label: "Surfing", type: "Surfing" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "16:00", label: "Snorkeling", type: "Swimming / Snorkeling" },
+        { start: "16:00", end: "18:00", label: "Beach Leisure", type: "Beach Leisure" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Relaxation Day",
+      activities: [
+        { start: "09:00", end: "10:00", label: "Breakfast", type: "Meal" },
+        { start: "10:00", end: "12:00", label: "Spa Treatment", type: "Spa / Ayurveda" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "16:00", label: "Beach Leisure", type: "Beach Leisure" },
+        { start: "16:00", end: "18:00", label: "Sunset Beach Walk", type: "Walking" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    }
+  ],
+  Hikkaduwa: [
+    {
+      name: "Surf & Coral Day",
+      activities: [
+        { start: "07:00", end: "08:00", label: "Breakfast", type: "Meal" },
+        { start: "08:00", end: "11:00", label: "Surfing at Hikkaduwa", type: "Surfing" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "16:00", label: "Coral Reef Snorkeling", type: "Swimming / Snorkeling" },
+        { start: "16:00", end: "18:00", label: "Beach Leisure", type: "Beach Leisure" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Beach & Cultural",
+      activities: [
+        { start: "08:00", end: "09:00", label: "Breakfast", type: "Meal" },
+        { start: "09:00", end: "11:00", label: "Seenigama Temple Visit", type: "Cultural / Temple Visit" },
+        { start: "11:00", end: "13:00", label: "Beach Walk", type: "Beach Leisure" },
+        { start: "13:00", end: "14:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "16:00", label: "Turtle Hatchery Visit", type: "Sightseeing" },
+        { start: "16:00", end: "18:00", label: "Sunset Beach Leisure", type: "Beach Leisure" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Relaxation Day",
+      activities: [
+        { start: "09:00", end: "10:00", label: "Breakfast", type: "Meal" },
+        { start: "10:00", end: "12:00", label: "Spa Treatment", type: "Spa / Ayurveda" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "16:00", label: "Beach Leisure", type: "Beach Leisure" },
+        { start: "16:00", end: "18:00", label: "Sunset Walk", type: "Walking" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    }
+  ],
+  Negombo: [
+    {
+      name: "Beach & Fishing Village",
+      activities: [
+        { start: "07:00", end: "08:00", label: "Breakfast", type: "Meal" },
+        { start: "08:00", end: "10:00", label: "Negombo Fish Market Visit", type: "Sightseeing" },
+        { start: "10:00", end: "12:00", label: "Negombo Beach Walk", type: "Beach Leisure" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "15:00", label: "Dutch Canal Boat Ride", type: "Boat Ride" },
+        { start: "15:00", end: "17:00", label: "St. Mary's Church Visit", type: "Cultural / Temple Visit" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Water Sports Day",
+      activities: [
+        { start: "08:00", end: "09:00", label: "Breakfast", type: "Meal" },
+        { start: "09:00", end: "12:00", label: "Surfing at Negombo", type: "Surfing" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "15:00", label: "Snorkeling", type: "Swimming / Snorkeling" },
+        { start: "15:00", end: "17:00", label: "Beach Leisure", type: "Beach Leisure" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Relaxation Day",
+      activities: [
+        { start: "09:00", end: "10:00", label: "Breakfast", type: "Meal" },
+        { start: "10:00", end: "12:00", label: "Spa Treatment", type: "Spa / Ayurveda" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "16:00", label: "Beach Leisure", type: "Beach Leisure" },
+        { start: "16:00", end: "18:00", label: "Sunset Walk", type: "Walking" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    }
+  ],
+  Dambulla: [
+    {
+      name: "Cave Temple & Sigiriya",
+      activities: [
+        { start: "07:00", end: "08:00", label: "Breakfast", type: "Meal" },
+        { start: "08:00", end: "11:00", label: "Dambulla Cave Temple Visit", type: "Cultural / Temple Visit" },
+        { start: "11:00", end: "13:00", label: "Sigiriya Rock Visit", type: "Hiking" },
+        { start: "13:00", end: "14:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "16:00", label: "Inamaluwa Village Walk", type: "Walking" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Nature & Wildlife",
+      activities: [
+        { start: "06:00", end: "10:00", label: "Minneriya National Park Safari", type: "Wildlife Safari" },
+        { start: "10:00", end: "11:00", label: "Breakfast", type: "Meal" },
+        { start: "11:00", end: "13:00", label: "Dambulla Lake Walk", type: "Walking" },
+        { start: "13:00", end: "14:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "16:00", label: "Nalanda Gedige Temple", type: "Cultural / Temple Visit" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Cycling & Village Tour",
+      activities: [
+        { start: "08:00", end: "09:00", label: "Breakfast", type: "Meal" },
+        { start: "09:00", end: "12:00", label: "Village Cycling Tour", type: "Bicycle Ride" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "15:00", label: "Popham Arboretum Walk", type: "Walking" },
+        { start: "15:00", end: "17:00", label: "Local Shopping", type: "Shopping" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    }
+  ],
+  Polonnaruwa: [
+    {
+      name: "Ancient City Cycling",
+      activities: [
+        { start: "07:00", end: "08:00", label: "Breakfast", type: "Meal" },
+        { start: "08:00", end: "12:00", label: "Polonnaruwa Ruins Cycling", type: "Bicycle Ride" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "16:00", label: "Gal Vihara Temple Visit", type: "Cultural / Temple Visit" },
+        { start: "16:00", end: "18:00", label: "Parakrama Samudra Walk", type: "Walking" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Heritage & Museum",
+      activities: [
+        { start: "08:00", end: "09:00", label: "Breakfast", type: "Meal" },
+        { start: "09:00", end: "11:00", label: "Polonnaruwa Museum Visit", type: "Cultural / Temple Visit" },
+        { start: "11:00", end: "13:00", label: "Royal Palace Ruins Tour", type: "Sightseeing" },
+        { start: "13:00", end: "14:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "17:00", label: "Rankoth Vehera & Temples", type: "Cultural / Temple Visit" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Nature & Lake",
+      activities: [
+        { start: "08:00", end: "09:00", label: "Breakfast", type: "Meal" },
+        { start: "09:00", end: "11:00", label: "Manampitiya Safari", type: "Wildlife Safari" },
+        { start: "11:00", end: "13:00", label: "Lake Walk", type: "Walking" },
+        { start: "13:00", end: "14:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "16:00", label: "Boat Ride on Lake", type: "Boat Ride" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    }
+  ],
+  Kalpitiya: [
+    {
+      name: "Dolphin & Kite Day",
+      activities: [
+        { start: "07:00", end: "08:00", label: "Breakfast", type: "Meal" },
+        { start: "08:00", end: "11:00", label: "Dolphin Watching Boat Tour", type: "Boat Ride" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "16:00", label: "Kite Surfing", type: "Surfing" },
+        { start: "16:00", end: "18:00", label: "Beach Leisure", type: "Beach Leisure" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Snorkeling & Island",
+      activities: [
+        { start: "08:00", end: "09:00", label: "Breakfast", type: "Meal" },
+        { start: "09:00", end: "12:00", label: "Bar Reef Snorkeling", type: "Swimming / Snorkeling" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "16:00", label: "Island Hopping Boat Tour", type: "Boat Ride" },
+        { start: "16:00", end: "18:00", label: "Beach Walk", type: "Walking" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Relaxation Day",
+      activities: [
+        { start: "09:00", end: "10:00", label: "Breakfast", type: "Meal" },
+        { start: "10:00", end: "12:00", label: "Spa Treatment", type: "Spa / Ayurveda" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "16:00", label: "Beach Leisure", type: "Beach Leisure" },
+        { start: "16:00", end: "18:00", label: "Sunset Walk", type: "Walking" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    }
+  ],
+  Haputale: [
+    {
+      name: "Tea Trails & Views",
+      activities: [
+        { start: "07:00", end: "08:00", label: "Breakfast", type: "Meal" },
+        { start: "08:00", end: "11:00", label: "Tea Plantation Hike", type: "Hiking" },
+        { start: "11:00", end: "13:00", label: "Lipton's Seat Viewpoint", type: "Sightseeing" },
+        { start: "13:00", end: "14:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "16:00", label: "Dambatenne Tea Factory", type: "Cultural / Temple Visit" },
+        { start: "16:00", end: "18:00", label: "Haputale Town Walk", type: "Walking" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Nature & Adventure",
+      activities: [
+        { start: "06:00", end: "09:00", label: "Horton Plains Hike", type: "Hiking" },
+        { start: "09:00", end: "10:00", label: "Breakfast", type: "Meal" },
+        { start: "10:00", end: "12:00", label: "World's End Walk", type: "Walking" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "16:00", label: "Adisham Bungalow Visit", type: "Sightseeing" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Relaxation & Scenery",
+      activities: [
+        { start: "09:00", end: "10:00", label: "Breakfast", type: "Meal" },
+        { start: "10:00", end: "12:00", label: "Scenic Train Ride", type: "Public Transport" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "15:00", label: "Spa Treatment", type: "Spa / Ayurveda" },
+        { start: "15:00", end: "17:00", label: "Haputale Viewpoint Walk", type: "Walking" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    }
+  ],
+  Badulla: [
+    {
+      name: "Waterfalls & Nature",
+      activities: [
+        { start: "08:00", end: "09:00", label: "Breakfast", type: "Meal" },
+        { start: "09:00", end: "11:00", label: "Dunhinda Falls Hike", type: "Hiking" },
+        { start: "11:00", end: "13:00", label: "Bogoda Wooden Bridge Walk", type: "Walking" },
+        { start: "13:00", end: "14:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "16:00", label: "Muthiyangana Temple Visit", type: "Cultural / Temple Visit" },
+        { start: "16:00", end: "18:00", label: "Badulla Town Sightseeing", type: "Sightseeing" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Tea & Hills Tour",
+      activities: [
+        { start: "08:00", end: "09:00", label: "Breakfast", type: "Meal" },
+        { start: "09:00", end: "11:00", label: "Tea Plantation Walk", type: "Walking" },
+        { start: "11:00", end: "13:00", label: "Ella Gap Viewpoint", type: "Sightseeing" },
+        { start: "13:00", end: "14:00", label: "Lunch", type: "Meal" },
+        { start: "14:00", end: "16:00", label: "Scenic Cycling", type: "Bicycle Ride" },
+        { start: "16:00", end: "18:00", label: "Local Market Walk", type: "Shopping" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    },
+    {
+      name: "Relaxation Day",
+      activities: [
+        { start: "09:00", end: "10:00", label: "Breakfast", type: "Meal" },
+        { start: "10:00", end: "12:00", label: "Spa Treatment", type: "Spa / Ayurveda" },
+        { start: "12:00", end: "13:00", label: "Lunch", type: "Meal" },
+        { start: "13:00", end: "15:00", label: "Uva Reservoir Walk", type: "Walking" },
+        { start: "15:00", end: "17:00", label: "Badulla Sightseeing", type: "Sightseeing" },
+        { start: "19:00", end: "20:00", label: "Dinner", type: "Meal" },
+      ]
+    }
+  ]
 };
