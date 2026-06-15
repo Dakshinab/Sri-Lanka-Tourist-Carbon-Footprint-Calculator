@@ -4,6 +4,7 @@ import StepTwoDestinations from "./components/StepTwoDestinations";
 import StepThreeItinerary from "./components/StepThreeItinerary";
 import StepFourReport from "./components/StepFourReport";
 import { defaultBase, defaultDestination, HOTELS, VEHICLES, ACTIVITY_EMISSION_FACTORS, HOTEL_EMISSION_FACTORS, DAY_TEMPLATES } from "./data";
+import TripHistoryModal from "./components/TripHistoryModal";
 
 function App() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -12,6 +13,10 @@ function App() {
   const [legPlans, setLegPlans] = useState([]);
   const [dayPlans, setDayPlans] = useState([]);
   const [errors, setErrors] = useState({});
+  const [showHistory, setShowHistory] = useState(false);
+  const [tripHistory, setTripHistory] = useState([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [selectedTrip, setSelectedTrip] = useState(null);
 
   const allocatedDays = useMemo(
     () => destinations.reduce((sum, d) => sum + Number(d.days || 0), 0),
@@ -292,6 +297,39 @@ function App() {
     setErrors({});
   };
 
+  const fetchHistory = async () => {
+  setHistoryLoading(true);
+  try {
+    const res = await fetch("http://localhost:5000/api/trips");
+    const data = await res.json();
+    if (data.success) setTripHistory(data.trips);
+  } catch (err) {
+    console.error("Failed to fetch history:", err);
+  } finally {
+    setHistoryLoading(false);
+  }
+};
+
+const fetchTripById = async (id) => {
+  try {
+    const res = await fetch(`http://localhost:5000/api/trips/${id}`);
+    const data = await res.json();
+    if (data.success) setSelectedTrip(data);
+  } catch (err) {
+    console.error("Failed to fetch trip:", err);
+  }
+};
+
+const deleteTrip = async (id) => {
+  try {
+    await fetch(`http://localhost:5000/api/trips/${id}`, { method: "DELETE" });
+    setTripHistory((prev) => prev.filter((t) => t.id !== id));
+    if (selectedTrip?.trip?.id === id) setSelectedTrip(null);
+  } catch (err) {
+    console.error("Failed to delete trip:", err);
+  }
+};
+
   const reportMarkup = useMemo(() => {
     if (!dayPlans.length || !legPlans.length) return "<p>Please complete previous steps first.</p>";
 
@@ -465,6 +503,28 @@ function App() {
 
   return (
     <div className="app-shell">
+      <TripHistoryModal
+        isOpen={showHistory}
+        onClose={() => { setShowHistory(false); setSelectedTrip(null); }}
+        trips={tripHistory}
+        loading={historyLoading}
+        onSelectTrip={fetchTripById}
+        onDeleteTrip={deleteTrip}
+        selectedTrip={selectedTrip}
+        onCloseTrip={() => setSelectedTrip(null)}
+      />
+
+      <TripHistoryModal
+        isOpen={showHistory}
+        onClose={() => { setShowHistory(false); setSelectedTrip(null); }}
+        trips={tripHistory}
+        loading={historyLoading}
+        onSelectTrip={fetchTripById}
+        onDeleteTrip={deleteTrip}
+        selectedTrip={selectedTrip}
+        onCloseTrip={() => setSelectedTrip(null)}
+      />
+
       <header className="topbar">
         <div className="brand-wrap">
           <div className="brand-icon">C</div>
@@ -486,6 +546,14 @@ function App() {
               return <li key={name} className={cls}>{name}</li>;
             })}
           </ol>
+          <button
+            className="btn btn-light"
+            type="button"
+            style={{ marginTop: 20, width: "100%", fontSize: "0.82rem" }}
+            onClick={() => { setShowHistory(true); fetchHistory(); }}
+          >
+            Trip History
+          </button>
         </aside>
 
         <section className="content card">
