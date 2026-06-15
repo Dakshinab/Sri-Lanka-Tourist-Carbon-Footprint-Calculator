@@ -730,6 +730,27 @@ textarea {
   gap: 10px;
 }
 
+/* ── Save Status ── */
+.save-status {
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  font-weight: 500;
+  margin-bottom: 14px;
+}
+
+.save-status.success {
+  background: #eaf7f0;
+  border: 1px solid #b6e4cc;
+  color: var(--ok);
+}
+
+.save-status.error {
+  background: #fdecea;
+  border: 1px solid #f5c6c2;
+  color: var(--danger);
+}
+
 /* ── Responsive ── */
 @media (max-width: 960px) {
   .layout {

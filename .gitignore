@@ -1,2 +1,5 @@
-node_modules/ 
-dist/ 
+node_modules/
+dist/
+backend/node_modules/
+backend/carbon.db
+backend/logs/

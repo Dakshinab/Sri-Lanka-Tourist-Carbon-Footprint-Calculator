@@ -517,7 +517,15 @@ function App() {
               errors={errors}
             />
           )}
-          {currentStep === 4 && <StepFourReport reportMarkup={reportMarkup} />}
+          {currentStep === 4 && (
+            <StepFourReport
+              reportMarkup={reportMarkup}
+              base={base}
+              destinations={destinations}
+              legPlans={legPlans}
+              dayPlans={dayPlans}
+            />
+          )}
 
           <footer className="form-nav">
             <button className="btn btn-light" type="button" onClick={() => setCurrentStep((s) => Math.max(1, s - 1))} style={{ visibility: currentStep === 1 ? "hidden" : "visible" }}>

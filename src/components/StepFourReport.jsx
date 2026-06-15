@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 
-function StepFourReport({ reportMarkup }) {
+function StepFourReport({ reportMarkup, base, destinations, legPlans, dayPlans }) {
+  const [saveStatus, setSaveStatus] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [savedTripId, setSavedTripId] = useState(null);
+
   const handlePrint = () => {
     const printWindow = window.open("", "_blank", "width=900,height=700");
     printWindow.document.write(`
@@ -10,110 +14,23 @@ function StepFourReport({ reportMarkup }) {
         <meta charset="UTF-8" />
         <title>Carbon Footprint Report</title>
         <style>
-          @page {
-            size: A4;
-            margin: 20mm 15mm;
-          }
-
+          @page { size: A4; margin: 20mm 15mm; }
           * { box-sizing: border-box; margin: 0; padding: 0; }
-
-          body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            font-size: 11pt;
-            color: #1a2318;
-            background: #fff;
-            padding: 0;
-          }
-
-          .report-header {
-            text-align: center;
-            padding-bottom: 14px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #2d6a4f;
-          }
-
-          .report-header h1 {
-            font-size: 18pt;
-            color: #2d6a4f;
-            margin-bottom: 4px;
-          }
-
-          .report-header p {
-            font-size: 9pt;
-            color: #6b7c69;
-          }
-
-          .report-section {
-            border: 1px solid #dde9e2;
-            border-radius: 6px;
-            padding: 10px 13px;
-            margin-bottom: 12px;
-            background: #ffffff;
-            border-left: 3px solid #74c69d;
-            page-break-inside: avoid;
-          }
-
-          h3 {
-            font-size: 11pt;
-            font-weight: 700;
-            color: #2d6a4f;
-            margin-bottom: 8px;
-          }
-
-          h4 {
-            font-size: 9.5pt;
-            font-weight: 600;
-            color: #6b7c69;
-            margin: 10px 0 5px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-          }
-
-          ul {
-            padding-left: 16px;
-            margin: 0 0 8px;
-            font-size: 10pt;
-            line-height: 1.8;
-          }
-
-          table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 6px;
-            font-size: 9.5pt;
-          }
-
-          th {
-            background: #e8f5ee;
-            color: #2d6a4f;
-            padding: 6px 8px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 9pt;
-          }
-
-          td {
-            padding: 5px 8px;
-            border-bottom: 1px solid #dde5db;
-            color: #1a2318;
-          }
-
+          body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11pt; color: #1a2318; background: #fff; }
+          .report-header { text-align: center; padding-bottom: 14px; margin-bottom: 20px; border-bottom: 2px solid #2d6a4f; }
+          .report-header h1 { font-size: 18pt; color: #2d6a4f; margin-bottom: 4px; }
+          .report-header p { font-size: 9pt; color: #6b7c69; }
+          .report-section { border: 1px solid #dde9e2; border-radius: 6px; padding: 10px 13px; margin-bottom: 12px; background: #fff; border-left: 3px solid #74c69d; page-break-inside: avoid; }
+          h3 { font-size: 11pt; font-weight: 700; color: #2d6a4f; margin-bottom: 8px; }
+          h4 { font-size: 9.5pt; font-weight: 600; color: #6b7c69; margin: 10px 0 5px; text-transform: uppercase; letter-spacing: 0.05em; }
+          ul { padding-left: 16px; margin: 0 0 8px; font-size: 10pt; line-height: 1.8; }
+          table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 9.5pt; }
+          th { background: #e8f5ee; color: #2d6a4f; padding: 6px 8px; text-align: left; font-weight: 600; font-size: 9pt; }
+          td { padding: 5px 8px; border-bottom: 1px solid #dde5db; color: #1a2318; }
           tr:last-child td { border-bottom: none; }
           tr:nth-child(even) td { background: #f7faf7; }
-
-          .report-table {
-            width: 100%;
-            border-collapse: collapse;
-          }
-
-          .report-footer {
-            margin-top: 24px;
-            padding-top: 10px;
-            border-top: 1px solid #dde5db;
-            font-size: 8.5pt;
-            color: #6b7c69;
-            text-align: center;
-          }
+          .report-table { width: 100%; border-collapse: collapse; }
+          .report-footer { margin-top: 24px; padding-top: 10px; border-top: 1px solid #dde5db; font-size: 8.5pt; color: #6b7c69; text-align: center; }
         </style>
       </head>
       <body>
@@ -131,20 +48,63 @@ function StepFourReport({ reportMarkup }) {
     `);
     printWindow.document.close();
     printWindow.focus();
-    setTimeout(() => {
-      printWindow.print();
-      printWindow.close();
-    }, 500);
+    setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    setSaveStatus(null);
+    try {
+      const response = await fetch("http://localhost:5000/api/trips", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ base, destinations, legPlans, dayPlans })
+      });
+      const data = await response.json();
+      if (data.success) {
+        setSavedTripId(data.tripId);
+        setSaveStatus("success");
+      } else {
+        setSaveStatus("error");
+      }
+    } catch (err) {
+      console.error("Save error:", err);
+      setSaveStatus("error");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
     <section className="step active">
       <h2>Final Report</h2>
-      <p className="muted">Review the complete trip carbon footprint report below. Use the button to download as PDF.</p>
+      <p className="muted">Review the complete trip carbon footprint report below.</p>
+
+      {/* Save Status */}
+      {saveStatus === "success" && (
+        <div className="save-status success">
+          Report saved successfully! Trip ID: <strong>#{savedTripId}</strong>
+        </div>
+      )}
+      {saveStatus === "error" && (
+        <div className="save-status error">
+          Failed to save report. Please check the server connection.
+        </div>
+      )}
+
       <div className="report" dangerouslySetInnerHTML={{ __html: reportMarkup }} />
-      <div className="actions">
+
+      <div className="actions" style={{ display: "flex", gap: 12, marginTop: 14 }}>
         <button className="btn btn-primary" type="button" onClick={handlePrint}>
           Download / Print as PDF (A4)
+        </button>
+        <button
+          className="btn btn-light"
+          type="button"
+          onClick={handleSave}
+          disabled={saving || saveStatus === "success"}
+        >
+          {saving ? "Saving..." : saveStatus === "success" ? "Saved" : "Save Report"}
         </button>
       </div>
     </section>
