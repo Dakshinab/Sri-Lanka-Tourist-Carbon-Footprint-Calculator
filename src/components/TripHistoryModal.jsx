@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
+import ConfirmModal from "./ConfirmModal";
 
 function TripHistoryModal({ isOpen, onClose, trips, loading, onSelectTrip, onDeleteTrip, selectedTrip, onCloseTrip }) {
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, tripId: null, tripName: "" });
+
   if (!isOpen) return null;
 
   const formatDate = (dt) => {
@@ -155,6 +158,20 @@ function TripHistoryModal({ isOpen, onClose, trips, loading, onSelectTrip, onDel
 
   return (
     <div className="modal-overlay" onClick={onClose}>
+      <ConfirmModal
+        isOpen={deleteModal.isOpen}
+        title="Delete Trip"
+        message={`Are you sure you want to delete trip #${deleteModal.tripId} — "${deleteModal.tripName}"? This cannot be undone.`}
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        danger={true}
+        onConfirm={() => {
+          onDeleteTrip(deleteModal.tripId);
+          setDeleteModal({ isOpen: false, tripId: null, tripName: "" });
+        }}
+        onCancel={() => setDeleteModal({ isOpen: false, tripId: null, tripName: "" })}
+      />
+
       <div className="history-modal-box" onClick={(e) => e.stopPropagation()}>
         <div className="history-modal-header">
           <h3>Trip History</h3>
@@ -191,7 +208,7 @@ function TripHistoryModal({ isOpen, onClose, trips, loading, onSelectTrip, onDel
                     className="btn-icon btn-icon-remove"
                     type="button"
                     title="Delete trip"
-                    onClick={() => onDeleteTrip(trip.id)}
+                    onClick={() => setDeleteModal({ isOpen: true, tripId: trip.id, tripName: trip.tourist_name })}
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="3 6 5 6 21 6" />
